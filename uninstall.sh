@@ -41,6 +41,13 @@ fi
 # Unload any enabled plugins (this won't persist but might help in the current session)
 echo "Note: Any plugin functions or aliases from this session will remain available until you restart your shell."
 
-echo -e "\nTo restore your default prompt in the current terminal, run:"
-echo "source ~/.zshrc"
-echo -e "\nOr start a new terminal session."
+# Automatically source .zshrc to apply changes immediately
+if [[ -n "$ZSH_VERSION" ]]; then
+    # If running in Zsh, source directly
+    echo "Restoring default prompt in current session..."
+    source "$HOME/.zshrc"
+else
+    # If running in another shell, attempt to source using zsh
+    echo "Attempting to restore default prompt..."
+    zsh -c "source $HOME/.zshrc" 2>/dev/null || echo "Please restart your terminal or run: source ~/.zshrc"
+fi

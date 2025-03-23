@@ -36,9 +36,16 @@ else
     echo "DevToolsZsh has been installed! Added to $ZSHRC_PATH"
 fi
 
-# Suggest to source zshrc
-echo -e "\nTo activate the prompt in your current terminal, run:"
-echo "source ~/.zshrc"
-echo -e "\nOr start a new terminal session."
+# Automatically source .zshrc to apply changes immediately
+if [[ -n "$ZSH_VERSION" ]]; then
+    # If running in Zsh, source directly
+    echo "Activating DevToolsZsh in current session..."
+    source "$HOME/.zshrc"
+else
+    # If running in another shell, attempt to source using zsh
+    echo "Attempting to activate DevToolsZsh..."
+    zsh -c "source $HOME/.zshrc" 2>/dev/null || echo "Please restart your terminal or run: source ~/.zshrc"
+fi
+
 echo "You can toggle between showing the full path and just the current directory by typing: toggle_path_display"
 echo -e "\nTo manage plugins, use: list_plugins, enable_plugin, disable_plugin"
