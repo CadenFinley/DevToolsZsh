@@ -1,6 +1,12 @@
 #!/bin/bash
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Check if installed in the user's home directory
+if [[ -d "$HOME/.devtoolszsh" ]]; then
+    SCRIPT_DIR="$HOME/.devtoolszsh"
+else
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+fi
+
 CUSTOM_PROMPT_PATH="$SCRIPT_DIR/prompt/custom_prompt.sh"
 INIT_SCRIPT_PATH="$SCRIPT_DIR/init.sh"
 ENV_LOADER_PATH="$SCRIPT_DIR/functions/environment_loader.sh"
@@ -36,6 +42,18 @@ if [ -n "$DEVTOOLSZSH_THEME" ]; then
 fi
 if [ -n "$DEVTOOLSZSH_BASE_DIR" ]; then
     unset DEVTOOLSZSH_BASE_DIR
+fi
+
+# Ask if the user wants to remove the installation directory
+if [[ -d "$HOME/.devtoolszsh" ]]; then
+    echo -n "Do you want to remove the DevToolsZsh installation directory? [y/N] "
+    read -r response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        rm -rf "$HOME/.devtoolszsh"
+        echo "Removed installation directory from $HOME/.devtoolszsh"
+    else
+        echo "Installation directory remains at $HOME/.devtoolszsh"
+    fi
 fi
 
 # Unload any enabled plugins (this won't persist but might help in the current session)

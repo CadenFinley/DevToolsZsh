@@ -1,14 +1,59 @@
 #!/bin/bash
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Check if the script is being run from a remote source
+if [[ "$0" == "bash" ]]; then
+    # This means the script is being run via curl pipe to bash
+    # Create a temporary directory and clone the repository
+    TEMP_DIR=$(mktemp -d)
+    echo "Creating temporary directory at $TEMP_DIR"
+    
+    # Clone the repository
+    echo "Downloading DevToolsZsh repository..."
+    git clone https://github.com/cadenfinley/DevToolsZsh.git "$TEMP_DIR" || {
+        echo "Failed to download DevToolsZsh repository. Please check your internet connection and try again."
+        rm -rf "$TEMP_DIR"
+        exit 1
+    }
+    
+    # Move to the cloned directory and run the local install script
+    cd "$TEMP_DIR"
+    SCRIPT_DIR="$TEMP_DIR"
+else
+    # Normal execution from a local copy
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+fi
+
 CUSTOM_PROMPT_PATH="$SCRIPT_DIR/prompt/custom_prompt.sh"
 INIT_SCRIPT_PATH="$SCRIPT_DIR/init.sh"
 ENV_LOADER_PATH="$SCRIPT_DIR/functions/environment_loader.sh"
 PLUGIN_LOADER_PATH="$SCRIPT_DIR/functions/plugin_loader.sh"
 ENABLED_PLUGINS_FILE="$SCRIPT_DIR/.enabled_plugins"
 ZSHRC_PATH="$HOME/.zshrc"
+INSTALL_DIR="$HOME/.devtoolszsh"
 
 echo "Installing DevToolsZsh custom prompt..."
+
+# Install to user's home directory if run via curl
+if [[ "$0" == "bash" ]]; then
+    # Create the installation directory
+    mkdir -p "$INSTALL_DIR"
+    
+    # Copy all files to the installation directory
+    echo "Copying files to $INSTALL_DIR..."
+    cp -R "$TEMP_DIR"/* "$INSTALL_DIR"
+    cp -R "$TEMP_DIR"/.enabled_plugins "$INSTALL_DIR" 2>/dev/null || true
+    
+    # Clean up temp directory
+    rm -rf "$TEMP_DIR"
+    
+    # Update paths to use the installation directory
+    SCRIPT_DIR="$INSTALL_DIR"
+    CUSTOM_PROMPT_PATH="$SCRIPT_DIR/prompt/custom_prompt.sh"
+    INIT_SCRIPT_PATH="$SCRIPT_DIR/init.sh"
+    ENV_LOADER_PATH="$SCRIPT_DIR/functions/environment_loader.sh"
+    PLUGIN_LOADER_PATH="$SCRIPT_DIR/functions/plugin_loader.sh"
+    ENABLED_PLUGINS_FILE="$SCRIPT_DIR/.enabled_plugins"
+fi
 
 # Make scripts executable
 chmod +x "$CUSTOM_PROMPT_PATH"

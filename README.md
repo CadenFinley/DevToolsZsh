@@ -33,7 +33,7 @@ You can install DevToolsZsh with a single command:
 curl -fsSL https://raw.githubusercontent.com/cadenfinley/DevToolsZsh/main/install.sh | bash
 ```
 
-This command downloads and executes the installation script automatically.
+This command downloads the entire repository and installs DevToolsZsh to your home directory at `~/.devtoolszsh`.
 
 For manual installation:
 
