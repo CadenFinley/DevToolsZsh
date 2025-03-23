@@ -25,6 +25,12 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     echo $TITLE_LINE
     echo $CREATED_LINE
     
+    # Function to uninstall DevToolsZsh
+    function uninstall_devtoolszsh() {
+        echo "Running DevToolsZsh uninstaller..."
+        bash "$DEVTOOLSZSH_BASE_DIR/uninstall.sh"
+    }
+    
     # Load plugins
     source "$BASE_DIR/functions/plugin_loader.sh"
 fi
