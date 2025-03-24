@@ -26,6 +26,19 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     echo $TITLE_LINE
     echo $CREATED_LINE
     
+    # Set terminal window title
+    function set_terminal_title() {
+        local user_dir=${PWD##*/}
+        echo -ne "\033]0;${user_dir} - DevToolsZsh\007"
+    }
+    
+    # Set the initial terminal title
+    set_terminal_title
+    
+    # Add precmd hook to update terminal title on directory change
+    autoload -Uz add-zsh-hook
+    add-zsh-hook precmd set_terminal_title
+    
     # Automatically check for updates if enabled
     if [[ "$DEVTOOLSZSH_AUTO_UPDATE" == "true" ]]; then
         "$BASE_DIR/check_updates.sh" --auto
