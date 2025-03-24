@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if auto-update mode is requested
+AUTO_UPDATE=false
+if [[ "$1" == "--auto-update" ]]; then
+    AUTO_UPDATE=true
+fi
+
 # Check if the script is being run from a remote source
 if [[ "$0" == "bash" ]]; then
     # This means the script is being run via curl pipe to bash
@@ -27,9 +33,11 @@ CUSTOM_PROMPT_PATH="$SCRIPT_DIR/prompt/custom_prompt.sh"
 INIT_SCRIPT_PATH="$SCRIPT_DIR/init.sh"
 ENV_LOADER_PATH="$SCRIPT_DIR/functions/environment_loader.sh"
 PLUGIN_LOADER_PATH="$SCRIPT_DIR/functions/plugin_loader.sh"
+CHECK_UPDATES_PATH="$SCRIPT_DIR/check_updates.sh"
 ENABLED_PLUGINS_FILE="$SCRIPT_DIR/.enabled_plugins"
 ZSHRC_PATH="$HOME/.zshrc"
 INSTALL_DIR="$HOME/.devtoolszsh"
+CONFIG_DIR="$HOME/.devtoolszsh_config"
 
 echo "Installing DevToolsZsh custom prompt..."
 
@@ -37,6 +45,9 @@ echo "Installing DevToolsZsh custom prompt..."
 if [[ "$0" == "bash" ]]; then
     # Create the installation directory
     mkdir -p "$INSTALL_DIR"
+    
+    # Create the configuration directory 
+    mkdir -p "$CONFIG_DIR"
     
     # Copy all files to the installation directory
     echo "Copying files to $INSTALL_DIR..."
@@ -52,14 +63,22 @@ if [[ "$0" == "bash" ]]; then
     INIT_SCRIPT_PATH="$SCRIPT_DIR/init.sh"
     ENV_LOADER_PATH="$SCRIPT_DIR/functions/environment_loader.sh"
     PLUGIN_LOADER_PATH="$SCRIPT_DIR/functions/plugin_loader.sh"
+    CHECK_UPDATES_PATH="$SCRIPT_DIR/check_updates.sh"
     ENABLED_PLUGINS_FILE="$SCRIPT_DIR/.enabled_plugins"
+else
+    # Create the configuration directory if it doesn't exist
+    mkdir -p "$CONFIG_DIR"
 fi
+
+# Make sure the config directory has proper permissions
+chmod 755 "$CONFIG_DIR"
 
 # Make scripts executable
 chmod +x "$CUSTOM_PROMPT_PATH"
 chmod +x "$INIT_SCRIPT_PATH"
 chmod +x "$ENV_LOADER_PATH"
 chmod +x "$PLUGIN_LOADER_PATH"
+chmod +x "$CHECK_UPDATES_PATH"
 
 # Create the enabled plugins file if it doesn't exist
 if [[ ! -f "$ENABLED_PLUGINS_FILE" ]]; then
@@ -72,12 +91,27 @@ fi
 # Check if the entries already exist in .zshrc
 if grep -q "source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH" "$ZSHRC_PATH" 2>/dev/null; then
     echo "DevToolsZsh is already installed in $ZSHRC_PATH"
+    
+    # If auto-update is requested, add it even if DevToolsZsh is already installed
+    if [[ "$AUTO_UPDATE" == "true" ]] && ! grep -q "$CHECK_UPDATES_PATH --auto" "$ZSHRC_PATH" 2>/dev/null; then
+        echo -e "\n# DevToolsZsh auto-update check" >> "$ZSHRC_PATH"
+        echo "$CHECK_UPDATES_PATH --auto" >> "$ZSHRC_PATH"
+        echo "Auto-update feature has been enabled"
+    fi
 else
     # Add our scripts to the user's .zshrc
     echo -e "\n# DevToolsZsh initialization" >> "$ZSHRC_PATH"
     echo "source \"$INIT_SCRIPT_PATH\"" >> "$ZSHRC_PATH"
     echo "source \"$ENV_LOADER_PATH\"" >> "$ZSHRC_PATH"
     echo "source \"$CUSTOM_PROMPT_PATH\"" >> "$ZSHRC_PATH"
+    
+    # Add auto-update if requested
+    if [[ "$AUTO_UPDATE" == "true" ]]; then
+        echo -e "\n# DevToolsZsh auto-update check" >> "$ZSHRC_PATH"
+        echo "$CHECK_UPDATES_PATH --auto" >> "$ZSHRC_PATH"
+        echo "Auto-update feature has been enabled"
+    fi
+    
     echo "DevToolsZsh has been installed! Added to $ZSHRC_PATH"
 fi
 
@@ -94,3 +128,9 @@ fi
 
 echo "You can toggle between showing the full path and just the current directory by typing: toggle_path_display"
 echo -e "\nTo manage plugins, use: list_plugins, enable_plugin, disable_plugin"
+if [[ "$AUTO_UPDATE" == "false" ]]; then
+    echo -e "\nTo check for updates, run: $CHECK_UPDATES_PATH"
+    echo "To enable auto-updates, reinstall with: $SCRIPT_DIR/install.sh --auto-update"
+else
+    echo -e "\nAuto-updates are enabled. Updates will be checked each time you open a new terminal."
+fi

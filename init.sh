@@ -5,6 +5,7 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     export DEVTOOLSZSH_INITIALIZED=true
     export DEVTOOLSZSH_DISPLAY_WHOLE_PATH=${DEVTOOLSZSH_DISPLAY_WHOLE_PATH:-false}
     export DEVTOOLSZSH_THEME=${DEVTOOLSZSH_THEME:-default}
+    export DEVTOOLSZSH_AUTO_UPDATE=${DEVTOOLSZSH_AUTO_UPDATE:-true}
     
     # Get base directory
     BASE_DIR="$( cd "$( dirname "${(%):-%x}" )" && pwd )"
@@ -24,6 +25,11 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     # Display title and creator information
     echo $TITLE_LINE
     echo $CREATED_LINE
+    
+    # Automatically check for updates if enabled
+    if [[ "$DEVTOOLSZSH_AUTO_UPDATE" == "true" ]]; then
+        "$BASE_DIR/check_updates.sh" --auto
+    fi
     
     # Function to uninstall DevToolsZsh
     function uninstall_devtoolszsh() {
