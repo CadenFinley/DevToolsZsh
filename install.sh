@@ -37,7 +37,6 @@ CHECK_UPDATES_PATH="$SCRIPT_DIR/check_updates.sh"
 ENABLED_PLUGINS_FILE="$SCRIPT_DIR/.enabled_plugins"
 ZSHRC_PATH="$HOME/.zshrc"
 INSTALL_DIR="$HOME/.devtoolszsh"
-CONFIG_DIR="$HOME/.devtoolszsh_config"
 
 echo "Installing DevToolsZsh custom prompt..."
 
@@ -45,9 +44,6 @@ echo "Installing DevToolsZsh custom prompt..."
 if [[ "$0" == "bash" ]]; then
     # Create the installation directory
     mkdir -p "$INSTALL_DIR"
-    
-    # Create the configuration directory 
-    mkdir -p "$CONFIG_DIR"
     
     # Copy all files to the installation directory
     echo "Copying files to $INSTALL_DIR..."
@@ -65,13 +61,7 @@ if [[ "$0" == "bash" ]]; then
     PLUGIN_LOADER_PATH="$SCRIPT_DIR/functions/plugin_loader.sh"
     CHECK_UPDATES_PATH="$SCRIPT_DIR/check_updates.sh"
     ENABLED_PLUGINS_FILE="$SCRIPT_DIR/.enabled_plugins"
-else
-    # Create the configuration directory if it doesn't exist
-    mkdir -p "$CONFIG_DIR"
 fi
-
-# Make sure the config directory has proper permissions
-chmod 755 "$CONFIG_DIR"
 
 # Make scripts executable
 chmod +x "$CUSTOM_PROMPT_PATH"
