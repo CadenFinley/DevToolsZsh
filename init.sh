@@ -69,6 +69,12 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
         echo "Setting removed from ~/.zshrc"
     }
     
+    # Function to manually check and apply updates
+    function update_devtoolszsh() {
+        echo "Checking for DevToolsZsh updates..."
+        check_for_updates
+    }
+    
     # Check for updates on startup if auto-update is enabled
     if [[ "$DEVTOOLSZSH_AUTO_UPDATE" == "true" ]]; then
         bash "$DEVTOOLSZSH_BASE_DIR/check_updates.sh" silent
