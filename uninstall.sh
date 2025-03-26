@@ -61,11 +61,25 @@ fi
 
 # Ask if the user wants to remove the installation directory
 if [[ -d "$HOME/.devtoolszsh" ]]; then
-    echo -n "Do you want to remove the DevToolsZsh installation directory? [y/N] "
+    echo -n "Do you want to remove the DevToolsZsh installation directory (including the .git folder)? [y/N] "
     read -r response
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        # Check if .git directory exists
+        if [[ -d "$HOME/.devtoolszsh/.git" ]]; then
+            echo "Removing Git repository and all DevToolsZsh files..."
+        else
+            echo "Removing all DevToolsZsh files..."
+        fi
+        
+        # Remove the entire directory including hidden files and folders
         rm -rf "$HOME/.devtoolszsh"
-        echo "Removed installation directory from $HOME/.devtoolszsh"
+        
+        # Verify removal
+        if [[ ! -d "$HOME/.devtoolszsh" ]]; then
+            echo "Successfully removed installation directory from $HOME/.devtoolszsh"
+        else
+            echo "Warning: There was an issue removing the installation directory."
+        fi
     else
         echo "Installation directory remains at $HOME/.devtoolszsh"
     fi

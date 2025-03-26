@@ -39,10 +39,16 @@ if [[ "$0" == "bash" ]]; then
     # Create the installation directory
     mkdir -p "$INSTALL_DIR"
     
-    # Copy all files to the installation directory
+    # Copy all files to the installation directory, including hidden files and the .git directory
     echo "Copying files to $INSTALL_DIR..."
-    cp -R "$TEMP_DIR"/* "$INSTALL_DIR"
-    cp -R "$TEMP_DIR"/.enabled_plugins "$INSTALL_DIR" 2>/dev/null || true
+    cp -R "$TEMP_DIR"/. "$INSTALL_DIR"
+    
+    # Verify that the .git directory was copied
+    if [[ -d "$INSTALL_DIR/.git" ]]; then
+        echo "Git repository preserved for update functionality"
+    else
+        echo "Warning: Git repository was not copied. Updates may not work correctly."
+    fi
     
     # Clean up temp directory
     rm -rf "$TEMP_DIR"
