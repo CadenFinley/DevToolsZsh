@@ -71,7 +71,6 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     
     # Function to manually check and apply updates
     function update_devtoolszsh() {
-        echo "Checking for DevToolsZsh updates..."
         check_for_updates
     }
     
