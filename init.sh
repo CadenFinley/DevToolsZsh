@@ -28,8 +28,7 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     
     # Set terminal window title
     function set_terminal_title() {
-        local user_dir=${PWD##*/}
-        echo -ne "\033]0;${user_dir} - DevToolsZsh\007"
+        echo -ne "\033]0;DevToolsZsh\007"
     }
     
     # Set the initial terminal title
