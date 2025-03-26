@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Check if auto-update mode is requested
-AUTO_UPDATE=false
-if [[ "$1" == "--auto-update" ]]; then
-    AUTO_UPDATE=true
-fi
-
 # Check if the script is being run from a remote source
 if [[ "$0" == "bash" ]]; then
     # This means the script is being run via curl pipe to bash
@@ -82,11 +76,12 @@ fi
 if grep -q "source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH" "$ZSHRC_PATH" 2>/dev/null; then
     echo "DevToolsZsh is already installed in $ZSHRC_PATH"
     
-    # If auto-update is requested, add it even if DevToolsZsh is already installed
-    if [[ "$AUTO_UPDATE" == "true" ]] && ! grep -q "$CHECK_UPDATES_PATH --auto" "$ZSHRC_PATH" 2>/dev/null; then
-        echo -e "\n# DevToolsZsh auto-update check" >> "$ZSHRC_PATH"
-        echo "$CHECK_UPDATES_PATH --auto" >> "$ZSHRC_PATH"
-        echo "Auto-update feature has been enabled"
+    # Remove any existing auto-update entries if they exist
+    if grep -q "DevToolsZsh auto-update check" "$ZSHRC_PATH"; then
+        TEMP_FILE=$(mktemp)
+        grep -v "DevToolsZsh auto-update check\|$CHECK_UPDATES_PATH" "$ZSHRC_PATH" > "$TEMP_FILE"
+        mv "$TEMP_FILE" "$ZSHRC_PATH"
+        echo "Removed auto-update feature"
     fi
 else
     # Add our scripts to the user's .zshrc
@@ -94,13 +89,6 @@ else
     echo "source \"$INIT_SCRIPT_PATH\"" >> "$ZSHRC_PATH"
     echo "source \"$ENV_LOADER_PATH\"" >> "$ZSHRC_PATH"
     echo "source \"$CUSTOM_PROMPT_PATH\"" >> "$ZSHRC_PATH"
-    
-    # Add auto-update if requested
-    if [[ "$AUTO_UPDATE" == "true" ]]; then
-        echo -e "\n# DevToolsZsh auto-update check" >> "$ZSHRC_PATH"
-        echo "$CHECK_UPDATES_PATH --auto" >> "$ZSHRC_PATH"
-        echo "Auto-update feature has been enabled"
-    fi
     
     echo "DevToolsZsh has been installed! Added to $ZSHRC_PATH"
 fi
@@ -111,9 +99,4 @@ echo "Alternatively, you can run: source ~/.zshrc"
 
 echo "You can toggle between showing the full path and just the current directory by typing: toggle_path_display"
 echo -e "\nTo manage plugins, use: list_plugins, enable_plugin, disable_plugin"
-if [[ "$AUTO_UPDATE" == "false" ]]; then
-    echo -e "\nTo check for updates, run: $CHECK_UPDATES_PATH"
-    echo "To enable auto-updates, reinstall with: $SCRIPT_DIR/install.sh --auto-update"
-else
-    echo -e "\nAuto-updates are enabled. Updates will be checked each time you open a new terminal."
-fi
+echo -e "\nTo check for updates, run: check_for_updates"

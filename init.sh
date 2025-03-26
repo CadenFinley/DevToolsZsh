@@ -5,7 +5,7 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     export DEVTOOLSZSH_INITIALIZED=true
     export DEVTOOLSZSH_DISPLAY_WHOLE_PATH=${DEVTOOLSZSH_DISPLAY_WHOLE_PATH:-false}
     export DEVTOOLSZSH_THEME=${DEVTOOLSZSH_THEME:-default}
-    export DEVTOOLSZSH_AUTO_UPDATE=${DEVTOOLSZSH_AUTO_UPDATE:-true}
+    export DEVTOOLSZSH_AUTO_UPDATE=${DEVTOOLSZSH_AUTO_UPDATE:-false}
     
     # Get base directory
     BASE_DIR="$( cd "$( dirname "${(%):-%x}" )" && pwd )"
@@ -39,16 +39,41 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     autoload -Uz add-zsh-hook
     add-zsh-hook precmd set_terminal_title
     
-    # Automatically check for updates if enabled
-    if [[ "$DEVTOOLSZSH_AUTO_UPDATE" == "true" ]]; then
-        "$BASE_DIR/check_updates.sh" --auto
-    fi
-    
     # Function to uninstall DevToolsZsh
     function uninstall_devtoolszsh() {
         echo "Running DevToolsZsh uninstaller..."
         bash "$DEVTOOLSZSH_BASE_DIR/uninstall.sh"
     }
+    
+    # Function to check for updates
+    function check_for_updates() {
+        bash "$DEVTOOLSZSH_BASE_DIR/check_updates.sh"
+    }
+    
+    # Function to enable automatic updates
+    function enable_auto_updates() {
+        export DEVTOOLSZSH_AUTO_UPDATE=true
+        echo "Auto-updates enabled. DevToolsZsh will check for updates each time a terminal is opened."
+        # Save setting to zshrc
+        if ! grep -q "export DEVTOOLSZSH_AUTO_UPDATE=true" ~/.zshrc; then
+            echo "export DEVTOOLSZSH_AUTO_UPDATE=true" >> ~/.zshrc
+            echo "Setting saved in ~/.zshrc"
+        fi
+    }
+    
+    # Function to disable automatic updates
+    function disable_auto_updates() {
+        export DEVTOOLSZSH_AUTO_UPDATE=false
+        echo "Auto-updates disabled."
+        # Remove setting from zshrc
+        sed -i.bak '/export DEVTOOLSZSH_AUTO_UPDATE=true/d' ~/.zshrc
+        echo "Setting removed from ~/.zshrc"
+    }
+    
+    # Check for updates on startup if auto-update is enabled
+    if [[ "$DEVTOOLSZSH_AUTO_UPDATE" == "true" ]]; then
+        bash "$DEVTOOLSZSH_BASE_DIR/check_updates.sh" silent
+    fi
     
     # Load plugins
     source "$BASE_DIR/functions/plugin_loader.sh"
