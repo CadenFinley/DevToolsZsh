@@ -105,4 +105,5 @@ echo "Alternatively, you can run: source ~/.zshrc"
 
 echo "You can toggle between showing the full path and just the current directory by typing: toggle_path_display"
 echo -e "\nTo manage plugins, use: list_plugins, enable_plugin, disable_plugin"
+echo -e "\nTo manage themes, use: list_themes, switch_theme <theme_name>"
 echo -e "\nTo check for updates, run: check_for_updates"

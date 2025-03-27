@@ -4,6 +4,7 @@
 if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     export DEVTOOLSZSH_INITIALIZED=true
     export DEVTOOLSZSH_DISPLAY_WHOLE_PATH=${DEVTOOLSZSH_DISPLAY_WHOLE_PATH:-false}
+    # Make sure theme is loaded from zshrc if set, otherwise use default
     export DEVTOOLSZSH_THEME=${DEVTOOLSZSH_THEME:-default}
     export DEVTOOLSZSH_AUTO_UPDATE=${DEVTOOLSZSH_AUTO_UPDATE:-false}
     
@@ -72,6 +73,22 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     # Function to manually check and apply updates
     function update_devtoolszsh() {
         check_for_updates
+    }
+    
+    # Function to list available themes
+    function list_themes() {
+        local themes_dir="$DEVTOOLSZSH_BASE_DIR/themes"
+        echo "Available themes:"
+        for theme in "$themes_dir"/*.sh; do
+            theme_name=$(basename "$theme" .sh)
+            if [[ "$theme_name" == "$DEVTOOLSZSH_THEME" ]]; then
+                echo "* $theme_name (current)"
+            else
+                echo "  $theme_name"
+            fi
+        done
+        echo ""
+        echo "To switch themes, use: switch_theme <theme_name>"
     }
     
     # Check for updates on startup if auto-update is enabled
