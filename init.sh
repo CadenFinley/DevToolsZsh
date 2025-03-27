@@ -81,6 +81,4 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     
     # Load plugins
     source "$BASE_DIR/functions/plugin_loader.sh"
-    source "$BASE_DIR/functions/theme_switcher.sh"
-    load_environment
 fi
