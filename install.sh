@@ -25,7 +25,6 @@ fi
 
 CUSTOM_PROMPT_PATH="$SCRIPT_DIR/prompt/custom_prompt.sh"
 INIT_SCRIPT_PATH="$SCRIPT_DIR/init.sh"
-ENV_LOADER_PATH="$SCRIPT_DIR/functions/environment_loader.sh"
 PLUGIN_LOADER_PATH="$SCRIPT_DIR/functions/plugin_loader.sh"
 CHECK_UPDATES_PATH="$SCRIPT_DIR/check_updates.sh"
 ENABLED_PLUGINS_FILE="$SCRIPT_DIR/.enabled_plugins"
@@ -57,7 +56,6 @@ if [[ "$0" == "bash" ]]; then
     SCRIPT_DIR="$INSTALL_DIR"
     CUSTOM_PROMPT_PATH="$SCRIPT_DIR/prompt/custom_prompt.sh"
     INIT_SCRIPT_PATH="$SCRIPT_DIR/init.sh"
-    ENV_LOADER_PATH="$SCRIPT_DIR/functions/environment_loader.sh"
     PLUGIN_LOADER_PATH="$SCRIPT_DIR/functions/plugin_loader.sh"
     CHECK_UPDATES_PATH="$SCRIPT_DIR/check_updates.sh"
     ENABLED_PLUGINS_FILE="$SCRIPT_DIR/.enabled_plugins"
@@ -66,7 +64,6 @@ fi
 # Make scripts executable
 chmod +x "$CUSTOM_PROMPT_PATH"
 chmod +x "$INIT_SCRIPT_PATH"
-chmod +x "$ENV_LOADER_PATH"
 chmod +x "$PLUGIN_LOADER_PATH"
 chmod +x "$CHECK_UPDATES_PATH"
 
@@ -93,7 +90,6 @@ else
     # Add our scripts to the user's .zshrc
     echo -e "\n# DevToolsZsh initialization" >> "$ZSHRC_PATH"
     echo "source \"$INIT_SCRIPT_PATH\"" >> "$ZSHRC_PATH"
-    echo "source \"$ENV_LOADER_PATH\"" >> "$ZSHRC_PATH"
     echo "source \"$CUSTOM_PROMPT_PATH\"" >> "$ZSHRC_PATH"
     
     echo "DevToolsZsh has been installed! Added to $ZSHRC_PATH"
