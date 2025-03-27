@@ -90,8 +90,9 @@ if grep -q "source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH" "$ZSHRC_PATH
         echo "Removed auto-update feature"
     fi
 else
-    # Add our scripts to the user's .zshrc
+    # Add our scripts to the user's .zshrc with the proper order
     echo -e "\n# DevToolsZsh initialization" >> "$ZSHRC_PATH"
+    echo "export DEVTOOLSZSH_THEME=\"default\"" >> "$ZSHRC_PATH"  # Define theme first
     echo "source \"$INIT_SCRIPT_PATH\"" >> "$ZSHRC_PATH"
     echo "source \"$ENV_LOADER_PATH\"" >> "$ZSHRC_PATH"
     echo "source \"$CUSTOM_PROMPT_PATH\"" >> "$ZSHRC_PATH"
