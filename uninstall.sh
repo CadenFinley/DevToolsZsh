@@ -9,6 +9,7 @@ fi
 
 CUSTOM_PROMPT_PATH="$SCRIPT_DIR/prompt/custom_prompt.sh"
 INIT_SCRIPT_PATH="$SCRIPT_DIR/init.sh"
+ENV_LOADER_PATH="$SCRIPT_DIR/functions/environment_loader.sh"
 PLUGIN_LOADER_PATH="$SCRIPT_DIR/functions/plugin_loader.sh"
 CHECK_UPDATES_PATH="$SCRIPT_DIR/check_updates.sh"
 ZSHRC_PATH="$HOME/.zshrc"
@@ -19,9 +20,9 @@ echo "Uninstalling DevToolsZsh..."
 TEMP_FILE=$(mktemp)
 
 # Remove DevToolsZsh entries from .zshrc
-if grep -q "DevToolsZsh\|source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH\|$CHECK_UPDATES_PATH" "$ZSHRC_PATH"; then
+if grep -q "DevToolsZsh\|source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH\|source.*$ENV_LOADER_PATH\|$CHECK_UPDATES_PATH" "$ZSHRC_PATH"; then
     # Copy .zshrc without the DevToolsZsh lines
-    grep -v "DevToolsZsh\|source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH\|$CHECK_UPDATES_PATH\|DevToolsZsh auto-update check" "$ZSHRC_PATH" > "$TEMP_FILE"
+    grep -v "DevToolsZsh\|source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH\|source.*$ENV_LOADER_PATH\|$CHECK_UPDATES_PATH\|DevToolsZsh auto-update check" "$ZSHRC_PATH" > "$TEMP_FILE"
     # Replace the original file
     mv "$TEMP_FILE" "$ZSHRC_PATH"
     echo "DevToolsZsh has been removed from $ZSHRC_PATH"
