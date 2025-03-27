@@ -41,3 +41,6 @@ function switch_theme() {
         return 1
     fi
 }
+
+# Initial load
+load_environment

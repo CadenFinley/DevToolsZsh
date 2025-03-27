@@ -26,8 +26,6 @@ fi
 CUSTOM_PROMPT_PATH="$SCRIPT_DIR/prompt/custom_prompt.sh"
 INIT_SCRIPT_PATH="$SCRIPT_DIR/init.sh"
 PLUGIN_LOADER_PATH="$SCRIPT_DIR/functions/plugin_loader.sh"
-THEME_SWITCHER_PATH="$SCRIPT_DIR/functions/theme_switcher.sh"
-
 CHECK_UPDATES_PATH="$SCRIPT_DIR/check_updates.sh"
 ENABLED_PLUGINS_FILE="$SCRIPT_DIR/.enabled_plugins"
 ZSHRC_PATH="$HOME/.zshrc"
@@ -59,7 +57,6 @@ if [[ "$0" == "bash" ]]; then
     CUSTOM_PROMPT_PATH="$SCRIPT_DIR/prompt/custom_prompt.sh"
     INIT_SCRIPT_PATH="$SCRIPT_DIR/init.sh"
     PLUGIN_LOADER_PATH="$SCRIPT_DIR/functions/plugin_loader.sh"
-    THEME_SWITCHER_PATH="$SCRIPT_DIR/functions/theme_switcher.sh"
     CHECK_UPDATES_PATH="$SCRIPT_DIR/check_updates.sh"
     ENABLED_PLUGINS_FILE="$SCRIPT_DIR/.enabled_plugins"
 fi
@@ -69,7 +66,6 @@ chmod +x "$CUSTOM_PROMPT_PATH"
 chmod +x "$INIT_SCRIPT_PATH"
 chmod +x "$PLUGIN_LOADER_PATH"
 chmod +x "$CHECK_UPDATES_PATH"
-chmod +x "$THEME_SWITCHER_PATH"
 
 # Create the enabled plugins file if it doesn't exist
 if [[ ! -f "$ENABLED_PLUGINS_FILE" ]]; then
@@ -80,7 +76,7 @@ if [[ ! -f "$ENABLED_PLUGINS_FILE" ]]; then
 fi
 
 # Check if the entries already exist in .zshrc
-if grep -q "source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH\|source.*$THEME_SWITCHER_PATH" "$ZSHRC_PATH" 2>/dev/null; then
+if grep -q "source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH" "$ZSHRC_PATH" 2>/dev/null; then
     echo "DevToolsZsh is already installed in $ZSHRC_PATH"
     
     # Remove any existing auto-update entries if they exist
@@ -95,7 +91,6 @@ else
     echo -e "\n# DevToolsZsh initialization" >> "$ZSHRC_PATH"
     echo "source \"$INIT_SCRIPT_PATH\"" >> "$ZSHRC_PATH"
     echo "source \"$CUSTOM_PROMPT_PATH\"" >> "$ZSHRC_PATH"
-    echo "source \"$THEME_SWITCHER_PATH\"" >> "$ZSHRC_PATH"
     
     echo "DevToolsZsh has been installed! Added to $ZSHRC_PATH"
 fi
@@ -103,3 +98,7 @@ fi
 # Inform the user to restart their terminal
 echo "Please restart your terminal or start a new session for changes to take effect."
 echo "Alternatively, you can run: source ~/.zshrc"
+
+echo "You can toggle between showing the full path and just the current directory by typing: toggle_path_display"
+echo -e "\nTo manage plugins, use: list_plugins, enable_plugin, disable_plugin"
+echo -e "\nTo check for updates, run: check_for_updates"
