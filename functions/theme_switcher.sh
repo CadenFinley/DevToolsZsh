@@ -26,6 +26,8 @@ function switch_theme() {
     THEME_PATH="${BASE_DIR}/themes/$1.sh"
     
     if [[ -f "$THEME_PATH" ]]; then
+        sed -i.bak '/^export DEVTOOLSZSH_THEME=/d' ~/.zshrc
+        echo "export DEVTOOLSZSH_THEME=\"$1\"" >> ~/.zshrc
         export DEVTOOLSZSH_THEME="$1"
         load_environment
         echo "Theme switched to $1"
