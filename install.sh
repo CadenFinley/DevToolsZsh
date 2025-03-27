@@ -1,40 +1,5 @@
 #!/bin/bash
 
-# DevToolsZsh Installer
-
-echo "Installing DevToolsZsh..."
-
-# Get script directory
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# Add source command to .zshrc if not already there
-if ! grep -q "source.*DevToolsZsh/init.sh" ~/.zshrc; then
-    echo "" >> ~/.zshrc
-    echo "# Initialize DevToolsZsh" >> ~/.zshrc
-    echo "source \"${SCRIPT_DIR}/init.sh\"" >> ~/.zshrc
-    echo "DevToolsZsh initialization added to ~/.zshrc"
-fi
-
-# Make sure theme settings come BEFORE sourcing init.sh
-if ! grep -q "export DEVTOOLSZSH_THEME=" ~/.zshrc; then
-    # Find the line with init.sh
-    LINE_NUM=$(grep -n "source.*DevToolsZsh/init.sh" ~/.zshrc | cut -d: -f1)
-    
-    if [ -n "$LINE_NUM" ]; then
-        # Insert theme setting before the init.sh line
-        sed -i.bak "${LINE_NUM}i\\
-export DEVTOOLSZSH_THEME=\"default\"
-" ~/.zshrc
-        echo "Default theme setting added to ~/.zshrc"
-    else
-        # Fallback: add to end of file
-        echo "export DEVTOOLSZSH_THEME=\"default\"" >> ~/.zshrc
-        echo "Default theme setting added to ~/.zshrc"
-    fi
-fi
-
-echo "Installation complete. Please restart your terminal or run 'source ~/.zshrc'"
-
 # Check if the script is being run from a remote source
 if [[ "$0" == "bash" ]]; then
     # This means the script is being run via curl pipe to bash
