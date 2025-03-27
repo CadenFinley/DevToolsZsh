@@ -30,31 +30,14 @@ function switch_theme() {
         load_environment
         echo "Theme switched to $1"
         
-        # Save theme persistently to ~/.zshrc
+        # Save theme to ~/.zshrc
         if grep -q 'export DEVTOOLSZSH_THEME=' ~/.zshrc; then
-            # Replace existing theme setting
             sed -i.bak "s|^export DEVTOOLSZSH_THEME=.*|export DEVTOOLSZSH_THEME=\"$1\"|g" ~/.zshrc
-            rm -f ~/.zshrc.bak 2>/dev/null  # Clean up backup file
         else
-            # Add new theme setting
             echo "export DEVTOOLSZSH_THEME=\"$1\"" >> ~/.zshrc
         fi
-        echo "Theme '$1' will be used for all new terminal sessions"
     else
         echo "Theme '$1' not found"
         return 1
     fi
-}
-
-function list_themes() {
-    BASE_DIR="$( cd "$( dirname "${(%):-%x}" )/.." && pwd )"
-    echo "Available themes:"
-    for theme in "${BASE_DIR}"/themes/*.sh; do
-        theme_name=$(basename "$theme" .sh)
-        if [[ "$theme_name" == "$DEVTOOLSZSH_THEME" ]]; then
-            echo "* $theme_name (current)"
-        else
-            echo "  $theme_name"
-        fi
-    done
 }
