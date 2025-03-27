@@ -8,9 +8,6 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     # Make sure we have a default theme as fallback, but don't override an existing setting
     if [[ -z "$DEVTOOLSZSH_THEME" ]]; then
         export DEVTOOLSZSH_THEME="default"
-        echo "Theme not found in environment, setting default theme"
-    else
-        echo "Using theme from environment: $DEVTOOLSZSH_THEME"
     fi
     
     export DEVTOOLSZSH_AUTO_UPDATE=${DEVTOOLSZSH_AUTO_UPDATE:-false}
