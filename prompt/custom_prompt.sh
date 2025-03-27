@@ -12,15 +12,6 @@ RESET_COLOR="%{\033[0m%}"
 # Configuration
 DISPLAY_WHOLE_PATH=${DEVTOOLSZSH_DISPLAY_WHOLE_PATH:-false}
 
-# Apply theme colors on load or reload
-function apply_theme_colors() {
-  SHELL_COLOR="%{${DEVTOOLSZSH_SHELL_COLOR:=\033[1;31m}%}"
-  DIRECTORY_COLOR="%{${DEVTOOLSZSH_DIRECTORY_COLOR:=\033[1;34m}%}"
-  BRANCH_COLOR="%{${DEVTOOLSZSH_BRANCH_COLOR:=\033[1;33m}%}"
-  GIT_COLOR="%{${DEVTOOLSZSH_GIT_COLOR:=\033[1;32m}%}"
-  RESET_COLOR="%{\033[0m%}"
-}
-
 function get_current_filename() {
   echo "${PWD##*/}"
 }
@@ -33,9 +24,6 @@ function git_custom_status() {
 }
 
 function build_prompt() {
-  # Ensure we have the most current theme colors
-  apply_theme_colors
-  
   local git_info=""
   local current_dir
   
@@ -63,9 +51,6 @@ function build_prompt() {
 
 setopt PROMPT_SUBST
 PROMPT='$(build_prompt)'
-
-# Immediately apply theme colors on load
-apply_theme_colors
 
 function toggle_path_display() {
   if [[ "$DISPLAY_WHOLE_PATH" == "true" ]]; then

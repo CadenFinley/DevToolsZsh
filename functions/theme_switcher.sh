@@ -4,6 +4,9 @@ function load_environment() {
     # Get absolute path to the base directory
     BASE_DIR="$( cd "$( dirname "${(%):-%x}" )/.." && pwd )"
     
+    # Debug the theme being loaded
+    echo "Loading theme: ${DEVTOOLSZSH_THEME:-default}"
+    
     # Use absolute paths for theme and prompt
     THEME_PATH="${BASE_DIR}/themes/${DEVTOOLSZSH_THEME:-default}.sh"
     if [[ -f "$THEME_PATH" ]]; then
@@ -16,12 +19,6 @@ function load_environment() {
     
     # Load prompt using absolute path
     source "${BASE_DIR}/prompt/custom_prompt.sh"
-    
-    # Force zsh to re-evaluate the prompt
-    zle reset-prompt 2>/dev/null || true
-    
-    # Set theme to persist across sessions
-    export CURRENT_DEVTOOLSZSH_THEME="$DEVTOOLSZSH_THEME"
 }
 
 function switch_theme() {
@@ -35,19 +32,14 @@ function switch_theme() {
     
     if [[ -f "$THEME_PATH" ]]; then
         export DEVTOOLSZSH_THEME="$1"
-        
-        # Source the theme file first
-        source "$THEME_PATH"
-        
-        # Then load the entire environment
         load_environment
-        
         echo "Theme switched to $1"
         
         # Save theme persistently to ~/.zshrc - ensure we're actually updating correctly
-        if grep -q 'export DEVTOOLSZSH_THEME=' ~/.zshrc; then
+        if grep -q '^export DEVTOOLSZSH_THEME=' ~/.zshrc; then
             # Replace existing theme setting - use a more reliable sed pattern
-            sed -i.bak 's/^export DEVTOOLSZSH_THEME=.*$/export DEVTOOLSZSH_THEME="'$1'"/' ~/.zshrc
+            sed -i.bak '/^export DEVTOOLSZSH_THEME=/d' ~/.zshrc
+            echo "export DEVTOOLSZSH_THEME=\"$1\"" >> ~/.zshrc
         else
             # Add new theme setting
             echo "export DEVTOOLSZSH_THEME=\"$1\"" >> ~/.zshrc
@@ -77,8 +69,3 @@ function list_themes() {
         fi
     done
 }
-
-# Load theme on script initialization if not already loaded
-if [[ -z "$CURRENT_DEVTOOLSZSH_THEME" || "$CURRENT_DEVTOOLSZSH_THEME" != "$DEVTOOLSZSH_THEME" ]]; then
-    load_environment
-fi
