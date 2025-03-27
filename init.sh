@@ -4,8 +4,9 @@
 if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     export DEVTOOLSZSH_INITIALIZED=true
     export DEVTOOLSZSH_DISPLAY_WHOLE_PATH=${DEVTOOLSZSH_DISPLAY_WHOLE_PATH:-false}
-    # Make sure theme is loaded from zshrc if set, otherwise use default
-    export DEVTOOLSZSH_THEME=${DEVTOOLSZSH_THEME:-default}
+    # Don't overwrite the theme if it's already set in .zshrc
+    # We're getting it from the environment directly now
+    # export DEVTOOLSZSH_THEME=${DEVTOOLSZSH_THEME:-default}
     export DEVTOOLSZSH_AUTO_UPDATE=${DEVTOOLSZSH_AUTO_UPDATE:-false}
     
     # Get base directory

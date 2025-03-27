@@ -4,11 +4,19 @@ function load_environment() {
     # Get absolute path to the base directory
     BASE_DIR="$( cd "$( dirname "${(%):-%x}" )/.." && pwd )"
     
+    # Set default theme if not already set from .zshrc
+    if [[ -z "$DEVTOOLSZSH_THEME" ]]; then
+        export DEVTOOLSZSH_THEME="default"
+    fi
+    
     # Use absolute paths for theme and prompt
-    THEME_PATH="${BASE_DIR}/themes/${DEVTOOLSZSH_THEME:-default}.sh"
+    THEME_PATH="${BASE_DIR}/themes/${DEVTOOLSZSH_THEME}.sh"
     if [[ -f "$THEME_PATH" ]]; then
         source "$THEME_PATH"
+        echo "Loaded theme: $DEVTOOLSZSH_THEME"
     else
+        echo "Theme '$DEVTOOLSZSH_THEME' not found, loading default"
+        export DEVTOOLSZSH_THEME="default"
         source "${BASE_DIR}/themes/default.sh"
     fi
     
@@ -32,11 +40,12 @@ function switch_theme() {
         if grep -q "export DEVTOOLSZSH_THEME=" ~/.zshrc; then
             # Replace existing theme setting
             sed -i.bak "s/export DEVTOOLSZSH_THEME=.*/export DEVTOOLSZSH_THEME=\"$1\"/" ~/.zshrc
+            echo "Theme setting saved for future sessions"
         else
             # Add new theme setting
             echo "export DEVTOOLSZSH_THEME=\"$1\"" >> ~/.zshrc
+            echo "Theme setting added to ~/.zshrc"
         fi
-        echo "Theme setting saved for future sessions"
         
         load_environment
         echo "Theme switched to $1"
