@@ -49,6 +49,9 @@ fi
 if [ -n "$DEVTOOLSZSH_THEME" ]; then
     unset DEVTOOLSZSH_THEME
 fi
+if [ -n "$CURRENT_DEVTOOLSZSH_THEME" ]; then
+    unset CURRENT_DEVTOOLSZSH_THEME
+fi
 if [ -n "$DEVTOOLSZSH_BASE_DIR" ]; then
     unset DEVTOOLSZSH_BASE_DIR
 fi

@@ -12,11 +12,15 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     # IMPORTANT: We need to ensure the theme from ~/.zshrc takes precedence,
     # but we also need a fallback if it's not set
     if [[ -z "$DEVTOOLSZSH_THEME" ]]; then
-        export DEVTOOLSZSH_THEME="default"
+        # Check if theme is defined in .zshrc but hasn't been exported to this session
+        if grep -q 'export DEVTOOLSZSH_THEME=' ~/.zshrc; then
+            # Extract the theme name from .zshrc
+            THEME_FROM_ZSHRC=$(grep 'export DEVTOOLSZSH_THEME=' ~/.zshrc | sed 's/^export DEVTOOLSZSH_THEME="\(.*\)"$/\1/')
+            export DEVTOOLSZSH_THEME="$THEME_FROM_ZSHRC"
+        else
+            export DEVTOOLSZSH_THEME="default"
+        fi
     fi
-    
-    # Theme debug information
-    echo "Using theme: $DEVTOOLSZSH_THEME"
     
     export DEVTOOLSZSH_AUTO_UPDATE=${DEVTOOLSZSH_AUTO_UPDATE:-false}
     

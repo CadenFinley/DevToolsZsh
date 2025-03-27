@@ -11,25 +11,28 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if ! grep -q "source.*DevToolsZsh/init.sh" ~/.zshrc; then
     echo "" >> ~/.zshrc
     echo "# Initialize DevToolsZsh" >> ~/.zshrc
+    
+    # First add the theme setting, then source init.sh (order is important)
+    echo "export DEVTOOLSZSH_THEME=\"default\"" >> ~/.zshrc
     echo "source \"${SCRIPT_DIR}/init.sh\"" >> ~/.zshrc
     echo "DevToolsZsh initialization added to ~/.zshrc"
-fi
-
-# Make sure theme settings come BEFORE sourcing init.sh
-if ! grep -q "export DEVTOOLSZSH_THEME=" ~/.zshrc; then
-    # Find the line with init.sh
-    LINE_NUM=$(grep -n "source.*DevToolsZsh/init.sh" ~/.zshrc | cut -d: -f1)
-    
-    if [ -n "$LINE_NUM" ]; then
-        # Insert theme setting before the init.sh line
-        sed -i.bak "${LINE_NUM}i\\
+else
+    # Make sure DEVTOOLSZSH_THEME is set before sourcing init.sh
+    if ! grep -q "export DEVTOOLSZSH_THEME=" ~/.zshrc; then
+        # Find the line with init.sh
+        LINE_NUM=$(grep -n "source.*DevToolsZsh/init.sh" ~/.zshrc | cut -d: -f1)
+        
+        if [ -n "$LINE_NUM" ]; then
+            # Insert theme setting before the init.sh line
+            sed -i.bak "${LINE_NUM}i\\
 export DEVTOOLSZSH_THEME=\"default\"
 " ~/.zshrc
-        echo "Default theme setting added to ~/.zshrc"
-    else
-        # Fallback: add to end of file
-        echo "export DEVTOOLSZSH_THEME=\"default\"" >> ~/.zshrc
-        echo "Default theme setting added to ~/.zshrc"
+            echo "Default theme setting added to ~/.zshrc"
+        else
+            # Fallback: add to end of file
+            echo "export DEVTOOLSZSH_THEME=\"default\"" >> ~/.zshrc
+            echo "Default theme setting added to ~/.zshrc"
+        fi
     fi
 fi
 
@@ -115,8 +118,16 @@ if [[ ! -f "$ENABLED_PLUGINS_FILE" ]]; then
 fi
 
 # Check if the entries already exist in .zshrc
-if grep -q "source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH\|source.*$THEME_SWITCHER_PATH" "$ZSHRC_PATH" 2>/dev/null; then
+if grep -q "source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH" "$ZSHRC_PATH" 2>/dev/null; then
     echo "DevToolsZsh is already installed in $ZSHRC_PATH"
+    
+    # Remove any duplicate theme_switcher.sh sourcing since it's now handled by init.sh
+    if grep -q "source.*$THEME_SWITCHER_PATH" "$ZSHRC_PATH"; then
+        TEMP_FILE=$(mktemp)
+        grep -v "source.*$THEME_SWITCHER_PATH" "$ZSHRC_PATH" > "$TEMP_FILE"
+        mv "$TEMP_FILE" "$ZSHRC_PATH"
+        echo "Removed duplicate theme_switcher.sh sourcing (now handled by init.sh)"
+    fi
     
     # Remove any existing auto-update entries if they exist
     if grep -q "DevToolsZsh auto-update check" "$ZSHRC_PATH"; then
@@ -128,9 +139,12 @@ if grep -q "source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH\|source.*$THE
 else
     # Add our scripts to the user's .zshrc
     echo -e "\n# DevToolsZsh initialization" >> "$ZSHRC_PATH"
+    echo "export DEVTOOLSZSH_THEME=\"default\"" >> "$ZSHRC_PATH"
     echo "source \"$INIT_SCRIPT_PATH\"" >> "$ZSHRC_PATH"
-    echo "source \"$CUSTOM_PROMPT_PATH\"" >> "$ZSHRC_PATH"
-    echo "source \"$THEME_SWITCHER_PATH\"" >> "$ZSHRC_PATH"
+    
+    # We no longer need to source these separately as they're handled by init.sh
+    # echo "source \"$CUSTOM_PROMPT_PATH\"" >> "$ZSHRC_PATH"
+    # echo "source \"$THEME_SWITCHER_PATH\"" >> "$ZSHRC_PATH"
     
     echo "DevToolsZsh has been installed! Added to $ZSHRC_PATH"
 fi
