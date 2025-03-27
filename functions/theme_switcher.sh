@@ -29,6 +29,13 @@ function switch_theme() {
         export DEVTOOLSZSH_THEME="$1"
         load_environment
         echo "Theme switched to $1"
+        
+        # Save theme to ~/.zshrc
+        if grep -q 'export DEVTOOLSZSH_THEME=' ~/.zshrc; then
+            sed -i.bak "s|^export DEVTOOLSZSH_THEME=.*|export DEVTOOLSZSH_THEME=\"$1\"|g" ~/.zshrc
+        else
+            echo "export DEVTOOLSZSH_THEME=\"$1\"" >> ~/.zshrc
+        fi
     else
         echo "Theme '$1' not found"
         return 1
