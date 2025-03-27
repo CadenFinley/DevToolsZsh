@@ -23,6 +23,11 @@ TEMP_FILE=$(mktemp)
 if grep -q "DevToolsZsh\|source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH\|source.*$THEME_SWITCHER_PATH\|$CHECK_UPDATES_PATH" "$ZSHRC_PATH"; then
     # Copy .zshrc without the DevToolsZsh lines
     grep -v "DevToolsZsh\|source.*$CUSTOM_PROMPT_PATH\|source.*$INIT_SCRIPT_PATH\|source.*$THEME_SWITCHER_PATH\|$CHECK_UPDATES_PATH\|DevToolsZsh auto-update check" "$ZSHRC_PATH" > "$TEMP_FILE"
+    
+    # Also remove the theme and auto-update settings
+    grep -v "^export DEVTOOLSZSH_THEME=\|^export DEVTOOLSZSH_AUTO_UPDATE=" "$TEMP_FILE" > "$TEMP_FILE.2"
+    mv "$TEMP_FILE.2" "$TEMP_FILE"
+    
     # Replace the original file
     mv "$TEMP_FILE" "$ZSHRC_PATH"
     echo "DevToolsZsh has been removed from $ZSHRC_PATH"
@@ -30,6 +35,9 @@ else
     echo "DevToolsZsh was not found in $ZSHRC_PATH"
     rm -f "$TEMP_FILE"
 fi
+
+# Clean up backup files that might have been created by sed operations
+rm -f "$ZSHRC_PATH.bak" 2>/dev/null
 
 # Reset environment variables
 if [ -n "$DEVTOOLSZSH_DISPLAY_WHOLE_PATH" ]; then
@@ -43,6 +51,9 @@ if [ -n "$DEVTOOLSZSH_THEME" ]; then
 fi
 if [ -n "$DEVTOOLSZSH_BASE_DIR" ]; then
     unset DEVTOOLSZSH_BASE_DIR
+fi
+if [ -n "$DEVTOOLSZSH_AUTO_UPDATE" ]; then
+    unset DEVTOOLSZSH_AUTO_UPDATE
 fi
 
 # Unset any OpenAI plugin environment variables
