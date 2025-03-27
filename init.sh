@@ -5,17 +5,20 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
     export DEVTOOLSZSH_INITIALIZED=true
     export DEVTOOLSZSH_DISPLAY_WHOLE_PATH=${DEVTOOLSZSH_DISPLAY_WHOLE_PATH:-false}
     
-    # DEVTOOLSZSH_THEME is loaded from ~/.zshrc if set there,
-    # otherwise defaults to "default"
+    # Get base directory first so we can use it everywhere
+    BASE_DIR="$( cd "$( dirname "${(%):-%x}" )" && pwd )"
+    export DEVTOOLSZSH_BASE_DIR="$BASE_DIR"
+    
+    # IMPORTANT: We need to ensure the theme from ~/.zshrc takes precedence,
+    # but we also need a fallback if it's not set
     if [[ -z "$DEVTOOLSZSH_THEME" ]]; then
         export DEVTOOLSZSH_THEME="default"
     fi
     
-    export DEVTOOLSZSH_AUTO_UPDATE=${DEVTOOLSZSH_AUTO_UPDATE:-false}
+    # Theme debug information
+    echo "Using theme: $DEVTOOLSZSH_THEME"
     
-    # Get base directory
-    BASE_DIR="$( cd "$( dirname "${(%):-%x}" )" && pwd )"
-    export DEVTOOLSZSH_BASE_DIR="$BASE_DIR"
+    export DEVTOOLSZSH_AUTO_UPDATE=${DEVTOOLSZSH_AUTO_UPDATE:-false}
     
     # Version information
     CURRENT_VERSION="1.0.0"
@@ -85,8 +88,10 @@ if [[ -z "$DEVTOOLSZSH_INITIALIZED" ]]; then
         bash "$DEVTOOLSZSH_BASE_DIR/check_updates.sh" silent
     fi
     
-    # Load plugins
+    # Load plugins and theme functions before applying them
     source "$BASE_DIR/functions/plugin_loader.sh"
     source "$BASE_DIR/functions/theme_switcher.sh"
+    
+    # Now load the environment which will apply the current theme
     load_environment
 fi

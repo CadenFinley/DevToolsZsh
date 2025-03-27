@@ -4,11 +4,16 @@ function load_environment() {
     # Get absolute path to the base directory
     BASE_DIR="$( cd "$( dirname "${(%):-%x}" )/.." && pwd )"
     
+    # Debug the theme being loaded
+    echo "Loading theme: ${DEVTOOLSZSH_THEME:-default}"
+    
     # Use absolute paths for theme and prompt
     THEME_PATH="${BASE_DIR}/themes/${DEVTOOLSZSH_THEME:-default}.sh"
     if [[ -f "$THEME_PATH" ]]; then
         source "$THEME_PATH"
     else
+        echo "Warning: Theme ${DEVTOOLSZSH_THEME} not found, falling back to default"
+        export DEVTOOLSZSH_THEME="default"
         source "${BASE_DIR}/themes/default.sh"
     fi
     
@@ -30,16 +35,22 @@ function switch_theme() {
         load_environment
         echo "Theme switched to $1"
         
-        # Save theme persistently to ~/.zshrc
-        if grep -q 'export DEVTOOLSZSH_THEME=' ~/.zshrc; then
-            # Replace existing theme setting
-            sed -i.bak "s|^export DEVTOOLSZSH_THEME=.*|export DEVTOOLSZSH_THEME=\"$1\"|g" ~/.zshrc
-            rm -f ~/.zshrc.bak 2>/dev/null  # Clean up backup file
+        # Save theme persistently to ~/.zshrc - ensure we're actually updating correctly
+        if grep -q '^export DEVTOOLSZSH_THEME=' ~/.zshrc; then
+            # Replace existing theme setting - use a more reliable sed pattern
+            sed -i.bak '/^export DEVTOOLSZSH_THEME=/d' ~/.zshrc
+            echo "export DEVTOOLSZSH_THEME=\"$1\"" >> ~/.zshrc
         else
             # Add new theme setting
             echo "export DEVTOOLSZSH_THEME=\"$1\"" >> ~/.zshrc
         fi
-        echo "Theme '$1' will be used for all new terminal sessions"
+        
+        # Verify the theme was correctly saved
+        if grep -q "export DEVTOOLSZSH_THEME=\"$1\"" ~/.zshrc; then
+            echo "Theme '$1' successfully saved for future terminal sessions"
+        else
+            echo "Warning: There was an issue saving the theme preference"
+        fi
     else
         echo "Theme '$1' not found"
         return 1
